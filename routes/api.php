@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\API\OrganizationController;
-use App\Models\organization;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
@@ -21,11 +20,7 @@ use App\Http\Controllers\API\AuthController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-
-Route::get('/organization', [OrganizationController::class, 'index'])->middleware('auth:api');
-Route::post('/organization', [OrganizationController::class, 'store'])->middleware('auth:api');
-Route::apiResource('/organization', [OrganizationController::class]);
-
+Route::apiResource('/organization', OrganizationController::class)->middleware('auth:api');
 
 /*Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

@@ -9,6 +9,8 @@ class organization extends Model
 {
     protected $fillable = [
         'legal_name',
-        'physical_location'
+        'physical_location',
+        'year',
+        'company_logo'
     ];
 }
