@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
-namespace App\Http\Controllers;
 
 use App\Http\Library\ApiHelpers;
 use App\Models\roles;
@@ -12,15 +11,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 //use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
-
-
-
-
-use Illuminate\Validation\UnauthorizedException;
-use NunoMaduro\Collision\Contracts\Writer;
 
 class ControllerExample extends Controller
 {
