@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\Middleware\Authenticate;
 
 class AuthController extends Controller
 {
@@ -28,10 +29,7 @@ class AuthController extends Controller
 
         return response([ 'user' => $user, 'access_token' => $accessToken]);
     }
-
-    public function login(Request $request)
-    {
-       /* $loginData = $request->validate([
+    /* $loginData = $request->validate([
             'email' => 'email|required',
             'password' => 'required'
         ]);
@@ -39,7 +37,7 @@ class AuthController extends Controller
         if (!auth()->attempt($loginData)) {
             return response(['message' => 'Invalid Credentials']);
         }
-       
+    
 
         //$user = User::find($id);
         //$accessToken = auth()->$user->createToken('authToken')->accessToken;
@@ -48,6 +46,8 @@ class AuthController extends Controller
 
         return response(['user' => auth()->user(), 'access_token' => $accessToken]);
         */
+        public function login(Request $request)
+        {
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email|max:255',
             'password' => 'required|string|min:6|confirmed',
@@ -72,9 +72,11 @@ class AuthController extends Controller
         }
     }
     public function logout (Request $request) {
-    $token = $request->user()->token();
-    $token->revoke();
-    $response = ['message' => 'You have been successfully logged out!'];
-    return response($response, 200);
+
+        $user = Auth::user();
+        $token = $request->$user->token('authToken');
+        $token->revoke();
+        $response = ['message' => 'You have been successfully logged out!'];
+        return response($response, 200);
     }
 }

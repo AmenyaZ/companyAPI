@@ -4,14 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Passport\HasApiTokens;
 
-class organization extends Model
+class roles extends Model
 {
     protected $fillable = [
-        'legal_name',
-        'physical_location',
-        'year',
-        'company_logo'
+        'title',
+        'slug',
+        'description'
     ];
     public function users()
     {
@@ -19,7 +19,7 @@ class organization extends Model
         return $this->belongsToMany(
             User::class,
             'organization_role_user',
-            'organization_id',
+            'role_id',
             'user_id'
         );
     }
