@@ -42,14 +42,14 @@ class OrganizationController extends Controller
     {
         $data = $request->all();
 
-        $validator = Validator::make($data, [
+        $myvalidator = Validator::make($data, [
             'legal_name',
             'physical_location'
         ]);
         $user = Auth::user();
         // $user = DB::table('users')->select('role')->where('id',1)->first();
         if ($this->isAdmin($user) || $this->isWriter($user)) {
-
+            $validator = Validator::make($data, $myvalidator);
             if ($validator->fails()) {
                 return response(['error' => $validator->errors(), 'Validation Error']);
             }

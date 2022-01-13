@@ -6,6 +6,7 @@ use App\Http\Middleware\Authenticate;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\ControllerExample;
+use App\Http\Controllers\API\CreateUsers;
 use App\Http\Controllers\API\OrganizationController;
 
 
@@ -22,26 +23,23 @@ use App\Http\Controllers\API\OrganizationController;
 */
 
 
-Route::post('/register', [AuthController::class, 'register']) 
-            ->middleware('restrictothers');
+Route::post('/register', [AuthController::class, 'register'])
+    ->middleware('restrictothers');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout']);
 
-    //        ->middleware('auth:api');
+//        ->middleware('auth:api');
 
-Route::group(['middleware' => 'auth:api'], function() {
+Route::group(['middleware' => 'auth:api'], function () {
 
+    //Organization
     Route::apiResource('/organization', OrganizationController::class);
-    
+
+    //Role
     Route::apiResource('/role', ControllerExample::class);
 
-    // add a new user with writer scope
-    Route::post('users/writer', [ControllerExample::class, 'createWriter']);
-
-    // add a new user with subscriber scope
-    Route::post('users/subscriber', [ControllerExample::class, 'createSubscriber']);
-    // delete a user
-    Route::delete('users/{id}', [ControllerExample::class, 'deleteUser']);
+    // User
+    Route::apiResource('user', CreateUsers::class);
 });
 
 
