@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\API;
 
-namespace App\Http\Controllers;
 
 use App\Http\Library\ApiHelpers;
 use App\Models\roles;
@@ -12,15 +11,10 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 //use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
-
-
-
-
-use Illuminate\Validation\UnauthorizedException;
-use NunoMaduro\Collision\Contracts\Writer;
 
 class ControllerExample extends Controller
 {
@@ -57,7 +51,7 @@ class ControllerExample extends Controller
     public function store(Request $request): JsonResponse
     {
         $user = Auth::user();
-        $data = Request::all();
+        $data = $request->all();
 
         if ($this->isAdmin($user)) {
             $validator = Validator::make($data, $this->roleValidationRules());
@@ -66,10 +60,10 @@ class ControllerExample extends Controller
             }
             // Create New Role;
             $Role = new roles();
-            $Role->title = Request::get('title');
+            $Role->title = $request->get('title');
             //$Role->title = $request->input('title');
-            $Role->slug = Str::slug(Request::get('title'));
-            $Role->description = Request::get('description');
+            $Role->slug = Str::slug($request->get('title'));
+            $Role->description = $request->get('description');
             $Role->save();
             return $this->onSuccess($Role, 'Role Created');
         }
@@ -104,81 +98,6 @@ class ControllerExample extends Controller
                 return $this->onSuccess($Role, 'Role Deleted');
             }
             return $this->onError(404, 'Role Not Found');
-        }
-        return $this->onError(401, 'Unauthorized Access');
-    }
-    public function createWriter(Request $request)
-    {
-        $user = Auth::user();
-        if ($this->isAdmin($user)) {
-            $validator = Validator::make($request->all(), $this->userValidatedRules());
-            if ($validator->fails()) {
-                return $this->onError(400, $validator->errors());
-            }
-            // Create New Writer
-            $newWriter = User::create([
-                'name' => $request->input('name'),
-                'email' => $request->input('email'),
-                'role' => 2,
-                'password' => Hash::make($request->input('password')),
-            ]);
-            $writerToken = $newWriter->createToken('authToken', ['writer'])->accessToken;
-            //return $this->onSuccess($writerToken, 'User Created With Writer Privilege');
-            return response(['Writer' => $newWriter, 'Writer Token' => $writerToken]);
-        }
-        return $this->onError(401, 'Unauthorized Access');
-    }
-    public function createSubscriber(Request $request)
-    {
-        //$user = $request->user();
-        $user = Auth::user();
-
-        if ($this->isAdmin($user)) {
-
-            $validator = Validator::make($request->all(), $this->userValidatedRules());
-            if ($validator->fails()) {
-                return $this->onError(400, $validator->errors());
-            }
-            //Create New Subscriber
-            $newSubscriber = User::create([
-                'name' => $request->input('name'),
-                'email' => $request->input('email'),
-                'role' => 3,
-                'password' => Hash::make($request->input('password')),
-            ]);
-            // $data = array(
-            //     'name' => $request->input('name'),
-            //     'email' => $request->input('email'),
-            //     'role' => 3,
-            //     'password' => Hash::make($request->input('password')),
-            // );
-
-            // $newSubscriber = User::create($data);
-
-            $subscriberToken = $newSubscriber->createToken('authToken', ['subscriber'])->plainTextToken;
-            //return $this->onSuccess($SubscriberToken, 'User Created With Subscriber Privilege');
-            return response(['Subscriber' => $newSubscriber, 'Subscriber Token' => $subscriberToken]);
-        }
-
-        return $this->onError(401, 'Unauthorized Access');
-    }
-
-    public function deleteUser(Request $request, $id): JsonResponse
-    {
-        //$user = $request->user();
-        $user = Auth::user();
-        if ($this->isAdmin($user)) {
-            $duser = User::find($id); // Find the id of the Role passed
-            if (!empty($duser)) {
-                if ($duser->role !== 1) {
-
-                    $duser->delete(); // Delete the specific user
-
-                    return response($duser, 'User Deleted');
-                }
-                return $this->onError(401, 'This is an Admin.');
-            }
-            return $this->onError(404, 'User Not Found');
         }
         return $this->onError(401, 'Unauthorized Access');
     }
