@@ -48,7 +48,7 @@ class OrganizationController extends Controller
         ]);
         $user = Auth::user();
         // $user = DB::table('users')->select('role')->where('id',1)->first();
-        if ($$this->isAdmin($user) || $this->isWriter($user)) {
+        if ($this->isAdmin($user) || $this->isWriter($user)) {
 
             if ($validator->fails()) {
                 return response(['error' => $validator->errors(), 'Validation Error']);
