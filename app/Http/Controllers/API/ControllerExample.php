@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API;
 
 
 use App\Http\Library\ApiHelpers;
-use App\Models\roles;
+use App\Models\Roles;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -38,7 +38,7 @@ class ControllerExample extends Controller
     {
         $user = Auth::user();
         if ($this->isAdmin($user) || $this->isWriter($user) || $this->isSubscriber($user)) {
-            $role = roles::find($id);
+            $role = Roles::find($id);
             //$role = DB::table('roles')->where('id', $request->$id)->first();
             if (!empty($role)) {
                 return $this->onSuccess($role, 'Roles Retrieved');
@@ -59,7 +59,7 @@ class ControllerExample extends Controller
                 return $this->onError(404, 'Validator Error');
             }
             // Create New Role;
-            $Role = new roles();
+            $Role = new Roles();
             $Role->title = $request->get('title');
             //$Role->title = $request->input('title');
             $Role->slug = Str::slug($request->get('title'));
@@ -80,7 +80,7 @@ class ControllerExample extends Controller
                 return $this->onError(400, $validator->errors());
             }
             // Update New Role
-            $Role = roles::find($id);
+            $Role = Roles::find($id);
             $Role->title = $request->input('title');
             $Role->content = $request->input('content');
             $Role->save();
@@ -92,7 +92,7 @@ class ControllerExample extends Controller
     {
         $user = Auth::user();
         if ($this->isAdmin($user) || $this->isWriter($user)) {
-            $Role = roles::find($id); // Find the id of the Role passed
+            $Role = Roles::find($id); // Find the id of the Role passed
             $Role->delete(); // Delete the specific Role data
             if (!empty($Role)) {
                 return $this->onSuccess($Role, 'Role Deleted');

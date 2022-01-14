@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Http\Library\ApiHelpers;
-use App\Models\roles;
+use App\Models\Roles;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
 
@@ -103,7 +103,7 @@ class CreateUsers extends Controller
         if ($this->isAdmin($user)) {
 
             $myuser = User::find($id);
-            $myuser = roles::find($id);
+            $myuser = Roles::find($id);
             $myuser->name = $request->input('name');
             $myuser->email = $request->input('email');
             $myuser->save();

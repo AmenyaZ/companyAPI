@@ -54,21 +54,21 @@ class User extends Authenticatable
     {
         return $this->role === 'user';
     }
-    public function organizations()
-    {
-        //return $this->belongsToMany(RelatedModel, pivot_table_name, foreign_key_of_current_model_in_pivot_table, foreign_key_of_other_model_in_pivot_table);
-        return $this->belongsToMany(
-            organization::class,
-            'organization_role_user',
-            'organization_id',
-            'user_id'
-        );
-    }
+    // public function organizations()
+    // {
+    //     //return $this->belongsToMany(RelatedModel, pivot_table_name, foreign_key_of_current_model_in_pivot_table, foreign_key_of_other_model_in_pivot_table);
+    //     return $this->belongsToMany(
+    //         Organization::class,
+    //         'organization_role_user',
+    //         'organization_id',
+    //         'user_id'
+    //     );
+    // }
     public function role()
     {
         //return $this->belongsToMany(RelatedModel, pivot_table_name, foreign_key_of_current_model_in_pivot_table, foreign_key_of_other_model_in_pivot_table);
         return $this->belongsToMany(
-            organization::class,
+            Organization::class,
             'organization_role_user',
             'role_id',
             'user_id'
