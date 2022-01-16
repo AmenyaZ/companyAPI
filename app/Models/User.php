@@ -13,7 +13,7 @@ use Laravel\Passport\HasApiTokens;
 class User extends Authenticatable
 {
 
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -24,7 +24,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        //'role'
+        'role'
     ];
 
     /**
@@ -64,15 +64,9 @@ class User extends Authenticatable
     //         'user_id'
     //     );
     // }
-    public function role()
+    public function roles()
     {
         //return $this->belongsToMany(RelatedModel, pivot_table_name, foreign_key_of_current_model_in_pivot_table, foreign_key_of_other_model_in_pivot_table);
-        return $this->belongsToMany(
-            Organization::class,
-            'organization_role_user',
-            'role_id',
-            'user_id'
-
-        );
+        return $this->belongsToMany(Role::class);
     }
 }
