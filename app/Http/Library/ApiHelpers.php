@@ -12,7 +12,7 @@ trait ApiHelpers
     {
         if (!empty($user)) {
 
-            if ($user->role == 1) {
+            if ($user->id == 1) {
                 return true;
             }
         }
@@ -66,7 +66,7 @@ trait ApiHelpers
     {
         return [
             'title' => 'required|string',
-            'slug' => 'required|string',
+            //'slug' => 'required|string',
             'description' => 'required|string',
         ];
     }

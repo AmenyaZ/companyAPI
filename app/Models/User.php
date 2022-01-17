@@ -13,7 +13,7 @@ use Laravel\Passport\HasApiTokens;
 class User extends Authenticatable
 {
 
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -23,8 +23,9 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password',
-        //'role'
+        'role',
+        'password'
+        
     ];
 
     /**
@@ -54,25 +55,19 @@ class User extends Authenticatable
     {
         return $this->role === 'user';
     }
-    public function organizations()
+    // public function organizations()
+    // {
+    //     //return $this->belongsToMany(RelatedModel, pivot_table_name, foreign_key_of_current_model_in_pivot_table, foreign_key_of_other_model_in_pivot_table);
+    //     return $this->belongsToMany(
+    //         Organization::class,
+    //         'organization_role_user',
+    //         'organization_id',
+    //         'user_id'
+    //     );
+    // }
+    public function roles()
     {
         //return $this->belongsToMany(RelatedModel, pivot_table_name, foreign_key_of_current_model_in_pivot_table, foreign_key_of_other_model_in_pivot_table);
-        return $this->belongsToMany(
-            organization::class,
-            'organization_role_user',
-            'organization_id',
-            'user_id'
-        );
-    }
-    public function role()
-    {
-        //return $this->belongsToMany(RelatedModel, pivot_table_name, foreign_key_of_current_model_in_pivot_table, foreign_key_of_other_model_in_pivot_table);
-        return $this->belongsToMany(
-            organization::class,
-            'organization_role_user',
-            'role_id',
-            'user_id'
-
-        );
+        return $this->belongsToMany(Role::class);
     }
 }

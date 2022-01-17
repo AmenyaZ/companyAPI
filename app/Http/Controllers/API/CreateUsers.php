@@ -11,9 +11,11 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Http\Library\ApiHelpers;
-use App\Models\roles;
+use App\Models\Role;
+use App\Models\RoleUser;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
+use Symfony\Component\Console\Input\Input;
 
 class CreateUsers extends Controller
 {
@@ -47,25 +49,35 @@ class CreateUsers extends Controller
     {
         //
         $user = Auth::user();
+        //$myrole = [2, 3];
+
 
         if ($this->isAdmin($user)) {
-
             $validator = Validator::make($request->all(), $this->userValidatedRules());
             if ($validator->fails()) {
                 return $this->onError(400, $validator->errors());
             }
+            //return "here is code 2 ";
             //Create New User
-            $newSubscriber = User::create([
-                'name' => $request->input('name'),
-                'email' => $request->input('email'),
-                'role' => 3,
-                'password' => Hash::make($request->input('password')),
-            ]);
-            
+            $user = new User();
+            $user->name = $request->get('name');
+            $user->email = $request->get('email');
+            //$user->role = $request->get('role');
+            $user->password = Hash::make($request->get('password'));
+            $user->save();
 
-            $subscriberToken = $newSubscriber->createToken('authToken', ['subscriber'])->plainTextToken;
-            return response(['Subscriber' => $newSubscriber, 'Subscriber Token' => $subscriberToken]);
+
+           // $myId = $user->id;
+            $myrole = $request->role;
+
+            $user->roles()->attach($myrole);
+
+
+            $userToken = $user->createToken('authToken')->accessToken;
+            return response(['User' => $user, 'Access Token' => $userToken]);
         }
+
+        return $this->onError(401, 'Unauthorized Access');
     }
 
     /**
@@ -82,7 +94,7 @@ class CreateUsers extends Controller
         if ($this->isAdmin($user)) {
 
             $myuser = User::find($id);
-            
+
             return $this->onSuccess($myuser, 'Retrieved successfully', 200);
         }
         return $this->onError(401, 'Unauthorized Access');
@@ -98,14 +110,15 @@ class CreateUsers extends Controller
     public function update(Request $request, User $user, $id)
     {
         //
-        $myuser = Auth::user();
+        $user = Auth::user();
 
         if ($this->isAdmin($user)) {
 
             $myuser = User::find($id);
-            $myuser = roles::find($id);
+            // $myuser = Role::find($id);
             $myuser->name = $request->input('name');
             $myuser->email = $request->input('email');
+            $user->password = Hash::make($request->get('password'));
             $myuser->save();
             return $this->onSuccess($myuser, 'Role Updated');
         }
@@ -123,7 +136,7 @@ class CreateUsers extends Controller
         //
         $user = Auth::user();
         if ($this->isAdmin($user)) {
-            $myuser = User::find($id); 
+            $myuser = User::find($id);
             $myuser->delete();
             if (!empty($myuser)) {
                 return $this->onSuccess($myuser, 'Role Deleted');

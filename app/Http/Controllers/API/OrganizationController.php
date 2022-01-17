@@ -4,7 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\OrganizationResource;
-use App\Models\organization;
+use App\Models\Organization;
 use App\Http\Library\ApiHelpers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,7 +26,7 @@ class OrganizationController extends Controller
         // $user = DB::table('users')->select('role')->where('id',1)->first();
 
         if ($this->isAdmin($user) || $this->isWriter($user) || $this->isSubscriber($user)) {
-            $org = organization::all();
+            $org = Organization::all();
             return response(['organizations' => OrganizationResource::collection($org), 'message' => 'Retrieved successfully'], 200);
         }
         return $this->onError(401, 'Unauthorized Access');
@@ -54,7 +54,7 @@ class OrganizationController extends Controller
                 return response(['error' => $validator->errors(), 'Validation Error']);
             }
 
-            $org = organization::create($data);
+            $org = Organization::create($data);
 
             return response(['org' => new OrganizationResource($org), 'message' => 'Created successfully'], 200);
         }
@@ -65,16 +65,16 @@ class OrganizationController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\organization  $organization
+     * @param  \App\Models\Organization  $organization
      * @return \Illuminate\Http\Response
      */
-    public function show(organization $organization, $id)
+    public function show(Organization $organization, $id)
     {
         $user = Auth::user();
 
         // $user = DB::table('users')->select('role')->where('id',1)->first();
         if ($this->isAdmin($user) || $this->isWriter($user) || $this->isSubscriber($user)) {
-            $org = organization::find($id);
+            $org = Organization::find($id);
             return $this->onSuccess($org, 'Retrieved successfully', 200);
            // return response(['org' => new OrganizationResource($organization), 'message' => 'Retrieved successfully'], 200);
         }
@@ -85,10 +85,10 @@ class OrganizationController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\organization  $organization
+     * @param  \App\Models\Organization  $organization
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, organization $organization)
+    public function update(Request $request, Organization $organization)
     {
         $user = Auth::user();
         // $user = DB::table('users')->select('role')->where('id',1)->first();
@@ -103,17 +103,17 @@ class OrganizationController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\organization  $organization
+     * @param  \App\Models\Organization  $organization
      * @return \Illuminate\Http\Response
      */
-    public function destroy(organization $organization, Request $request, $id)
+    public function destroy(Organization $organization, Request $request, $id)
     {
         //
         $user = Auth::user();
         // $user = DB::table('users')->select('role')->where('id',1)->first();
 
         if ($this->isAdmin($user)) {
-            $dOrg = organization::find($id); //find id of the Organization
+            $dOrg = Organization::find($id); //find id of the Organization
             if (!empty($dOrg)) {
                 $dOrg->delete();
                 return response(['message' => 'Deleted']);
