@@ -20,14 +20,12 @@ trait ApiHelpers
         return false;
     }
 
-    protected function isWriter($user): bool
+    protected function isUser($user): bool
     {
 
-        if (!empty($user)) {
-
-            if ($user->role == 2) {
-                return true;
-            }
+        if (!empty($user)) 
+        {
+            return true;
         }
 
         return false;

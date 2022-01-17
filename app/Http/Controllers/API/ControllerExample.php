@@ -26,7 +26,7 @@ class ControllerExample extends Controller
     {
         $user = Auth::user();
 
-        if ($this->isAdmin($user)) {
+        if ($this->isAdmin($user) || $this->isUser($user)) {
             $role = DB::table('roles')->get();
             return $this->onSuccess($role, 'Role Retrieved');
         }
@@ -37,7 +37,7 @@ class ControllerExample extends Controller
     public function show(Request $request, $id): JsonResponse
     {
         $user = Auth::user();
-        if ($this->isAdmin($user) || $this->isWriter($user) || $this->isSubscriber($user)) {
+        if ($this->isAdmin($user) || $this->isUser($user)) {
             $role = Role::find($id);
             //$role = DB::table('roles')->where('id', $request->$id)->first();
             if (!empty($role)) {
