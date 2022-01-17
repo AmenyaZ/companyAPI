@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOrganizationUsersTable extends Migration
+class CreateOrganizationUserTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateOrganizationUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('organization_users', function (Blueprint $table) {
+        Schema::create('organization_user', function (Blueprint $table) {
             $table->id();
 
             $table->unsignedBigInteger('organization_id')->nullable();

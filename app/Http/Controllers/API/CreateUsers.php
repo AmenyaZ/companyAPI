@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Organization;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 //use Illuminate\Validation\Validator;
@@ -57,7 +58,6 @@ class CreateUsers extends Controller
             if ($validator->fails()) {
                 return $this->onError(400, $validator->errors());
             }
-            //return "here is code 2 ";
             //Create New User
             $user = new User();
             $user->name = $request->get('name');
@@ -69,8 +69,10 @@ class CreateUsers extends Controller
 
            // $myId = $user->id;
             $myrole = $request->role;
+            $myOrg = $request->organization;
 
             $user->roles()->attach($myrole);
+            $user->organizations()->attach($myOrg);
 
 
             $userToken = $user->createToken('authToken')->accessToken;
@@ -120,7 +122,7 @@ class CreateUsers extends Controller
             $myuser->email = $request->input('email');
             $user->password = Hash::make($request->get('password'));
             $myuser->save();
-            return $this->onSuccess($myuser, 'Role Updated');
+            return $this->onSuccess($myuser, 'Role Updated Successfully');
         }
         return $this->onError(401, 'Unauthorized Access');
     }

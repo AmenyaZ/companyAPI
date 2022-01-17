@@ -25,7 +25,7 @@ class OrganizationController extends Controller
         $user = Auth::user();
         // $user = DB::table('users')->select('role')->where('id',1)->first();
 
-        if ($this->isAdmin($user) || $this->isWriter($user) || $this->isSubscriber($user)) {
+        if ($this->isAdmin($user) || $this->isUser($user)) {
             $org = Organization::all();
             return response(['organizations' => OrganizationResource::collection($org), 'message' => 'Retrieved successfully'], 200);
         }
@@ -40,23 +40,32 @@ class OrganizationController extends Controller
      */
     public function store(Request $request)
     {
-        $data = $request->all();
-
-        $myvalidator = Validator::make($data, [
-            'legal_name',
-            'physical_location'
-        ]);
         $user = Auth::user();
+
+        $validator = Validator::make($request->all(), [
+            'legal_name',
+            'physical_location',
+            'year',
+            'company_logo'
+        ]);
         // $user = DB::table('users')->select('role')->where('id',1)->first();
-        if ($this->isAdmin($user) || $this->isWriter($user)) {
-            $validator = Validator::make($data, $myvalidator);
+        if ($this->isAdmin($user)) {
+
             if ($validator->fails()) {
                 return response(['error' => $validator->errors(), 'Validation Error']);
             }
+            $org = new Organization();
+            $org->legal_name = $request->get('legal_name');
+            $org->physical_location = $request->get('physical_location');
+            $org->year = $request->get('year');
+            $org->company_logo = $request->file('company_logo');
+            $org->save();
 
-            $org = Organization::create($data);
+            //return "here";
 
-            return response(['org' => new OrganizationResource($org), 'message' => 'Created successfully'], 200);
+            //$org = Organization::create($data);
+
+            return response(['org' => new OrganizationResource($org), 'message' => 'Organization Created successfully'], 200);
         }
         return $this->onError(401, 'Unauthorized Access');
     }
@@ -73,10 +82,10 @@ class OrganizationController extends Controller
         $user = Auth::user();
 
         // $user = DB::table('users')->select('role')->where('id',1)->first();
-        if ($this->isAdmin($user) || $this->isWriter($user) || $this->isSubscriber($user)) {
+        if ($this->isAdmin($user) || $this->isUser($user)) {
             $org = Organization::find($id);
             return $this->onSuccess($org, 'Retrieved successfully', 200);
-           // return response(['org' => new OrganizationResource($organization), 'message' => 'Retrieved successfully'], 200);
+            // return response(['org' => new OrganizationResource($organization), 'message' => 'Retrieved successfully'], 200);
         }
         return $this->onError(401, 'Unauthorized Access');
     }
@@ -92,7 +101,7 @@ class OrganizationController extends Controller
     {
         $user = Auth::user();
         // $user = DB::table('users')->select('role')->where('id',1)->first();
-        if ($this->isAdmin($user) || $this->isWriter($user)) {
+        if ($this->isAdmin($user)) {
             $organization->update($request->all());
 
             return response(['org' => new OrganizationResource($organization), 'message' => 'Retrieved successfully'], 200);
