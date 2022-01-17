@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use phpDocumentor\Reflection\Types\Nullable;
 
-class CreateRoleUserPivotTable extends Migration
+class CreateRoleUserTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,18 +15,16 @@ class CreateRoleUserPivotTable extends Migration
     public function up()
     {
         Schema::create('role_user', function (Blueprint $table) {
-            $table->bigIncrements('id'); //current table primary key and id
+            $table->id(); //current table primary key and id
 
-            $table->unsignedBigInteger('role_id')->nullable()->index();
-            $table->unsignedBigInteger('user_id')->nullable()->index();
+            $table->unsignedBigInteger('role_id')->nullable();
+            $table->unsignedBigInteger('user_id')->nullable();
 
 
 
 
             $table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-
-            $table->primary(['role_id', 'user_id']);
         });
     }
 
@@ -38,5 +36,7 @@ class CreateRoleUserPivotTable extends Migration
     public function down()
     {
         Schema::dropIfExists('role_user');
+        
+
     }
 }

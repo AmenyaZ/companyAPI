@@ -49,36 +49,35 @@ class CreateUsers extends Controller
     {
         //
         $user = Auth::user();
-        $myrole = [2, 3];
+        //$myrole = [2, 3];
+
 
         if ($this->isAdmin($user)) {
-
             $validator = Validator::make($request->all(), $this->userValidatedRules());
             if ($validator->fails()) {
                 return $this->onError(400, $validator->errors());
             }
+            //return "here is code 2 ";
             //Create New User
-            $newSubscriber = new User();
+            $user = new User();
+            $user->name = $request->get('name');
+            $user->email = $request->get('email');
+            //$user->role = $request->get('role');
+            $user->password = Hash::make($request->get('password'));
+            $user->save();
 
-            $newSubscriber->name = $request->input('name');
-            $newSubscriber->email = $request->input('email');
-            $newSubscriber->role = $request->input('roles');
-            $newSubscriber->password = Hash::make($request->input('password'));
-            $newSubscriber->save;
-            $newSubscriber->roles()->attach($myrole);
-           // $myrole = $request->input('role');
-            // }
-           // return $this->onError(401, 'User role not available');
-            // $input = Input::all('role');
-            // //$myrole = Roles::get($input);
-            // //$newSubscriber= User::first();
-            // $role = Roles::first();
-            // $newSubscriber->roles()->attach($role);            
 
-            $subscriberToken = $newSubscriber->createToken('authToken', ['subscriber'])->plainTextToken;
-            return response(['Subscriber' => $newSubscriber, 'Subscriber Token' => $subscriberToken]);
-            
+           // $myId = $user->id;
+            $myrole = $request->role;
+
+            $user->roles()->attach($myrole);
+
+
+            $userToken = $user->createToken('authToken')->accessToken;
+            return response(['User' => $user, 'Access Token' => $userToken]);
         }
+
+        return $this->onError(401, 'Unauthorized Access');
     }
 
     /**
@@ -111,14 +110,15 @@ class CreateUsers extends Controller
     public function update(Request $request, User $user, $id)
     {
         //
-        $myuser = Auth::user();
+        $user = Auth::user();
 
         if ($this->isAdmin($user)) {
 
             $myuser = User::find($id);
-            $myuser = Role::find($id);
+            // $myuser = Role::find($id);
             $myuser->name = $request->input('name');
             $myuser->email = $request->input('email');
+            $user->password = Hash::make($request->get('password'));
             $myuser->save();
             return $this->onSuccess($myuser, 'Role Updated');
         }
