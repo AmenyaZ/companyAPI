@@ -31,18 +31,6 @@ trait ApiHelpers
         return false;
     }
 
-    protected function isSubscriber($user): bool
-    {
-        if (!empty($user)) {
-
-            if ($user->role == 3) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     protected function onSuccess($data, string $message = '', int $code = 200): JsonResponse
     {
         return response()->json([

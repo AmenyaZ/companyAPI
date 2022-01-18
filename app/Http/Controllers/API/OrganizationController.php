@@ -26,8 +26,12 @@ class OrganizationController extends Controller
         // $user = DB::table('users')->select('role')->where('id',1)->first();
 
         if ($this->isAdmin($user) || $this->isUser($user)) {
+            
             $org = Organization::all();
-            return response(['organizations' => OrganizationResource::collection($org), 'message' => 'Retrieved successfully'], 200);
+            if (!empty($org)) {
+            return response(['organizations' => OrganizationResource::collection($org), 'message' => 'Organizations Retrieved successfully'], 200);
+            }
+            return $this->onError(404, 'No Organizations Found');
         }
         return $this->onError(401, 'Unauthorized Access');
     }
@@ -77,15 +81,21 @@ class OrganizationController extends Controller
      * @param  \App\Models\Organization  $organization
      * @return \Illuminate\Http\Response
      */
-    public function show(Organization $organization, $id)
+
+    public function show($id)
     {
+        //
         $user = Auth::user();
 
-        // $user = DB::table('users')->select('role')->where('id',1)->first();
-        if ($this->isAdmin($user) || $this->isUser($user)) {
-            $org = Organization::find($id);
-            return $this->onSuccess($org, 'Retrieved successfully', 200);
-            // return response(['org' => new OrganizationResource($organization), 'message' => 'Retrieved successfully'], 200);
+        if ($this->isAdmin($user)) {
+
+            $myOrganization = Organization::find($id);
+
+            if (!empty($myOrganization)) {
+
+                return $this->onSuccess($myOrganization, 'Orgnaization Retrieved successfully', 200);
+            }
+            return $this->onError(404, 'Organization  Not Found');
         }
         return $this->onError(401, 'Unauthorized Access');
     }
@@ -97,14 +107,23 @@ class OrganizationController extends Controller
      * @param  \App\Models\Organization  $organization
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Organization $organization)
+    public function update(Request $request, $id)
     {
         $user = Auth::user();
         // $user = DB::table('users')->select('role')->where('id',1)->first();
         if ($this->isAdmin($user)) {
-            $organization->update($request->all());
 
-            return response(['org' => new OrganizationResource($organization), 'message' => 'Retrieved successfully'], 200);
+            $org = Organization::find($id);
+            if (!empty($org)) {
+                $org->legal_name = $request->get('legal_name');
+                $org->physical_location = $request->get('physical_location');
+                $org->year = $request->get('year');
+                $org->company_logo = $request->file('company_logo');
+                $org->save();
+                return $this->onSuccess($org, 'Role Updated');
+
+            }
+            return $this->onError(404, 'Organization  Not Found');
         }
         return $this->onError(401, 'Unauthorized Access');
     }
@@ -115,7 +134,7 @@ class OrganizationController extends Controller
      * @param  \App\Models\Organization  $organization
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Organization $organization, Request $request, $id)
+    public function destroy(Request $request, $id)
     {
         //
         $user = Auth::user();
