@@ -33,8 +33,11 @@ class CreateUsers extends Controller
         $user = Auth::user();
 
         if ($this->isAdmin($user)) {
-            $myusers = DB::table('users')->get();
-            return $this->onSuccess($myusers, 'Users Retrieved');
+            if (!empty($user)) {
+                $myusers = DB::table('users')->get();
+                return $this->onSuccess($myusers, 'Users Retrieved');
+            }
+            return $this->onError(404, 'No users Available');
         }
 
         return $this->onError(401, 'Unauthorized Access');
@@ -67,7 +70,7 @@ class CreateUsers extends Controller
             $user->save();
 
 
-           // $myId = $user->id;
+            // $myId = $user->id;
             $myrole = $request->role;
             $myOrg = $request->organization;
 
@@ -96,8 +99,10 @@ class CreateUsers extends Controller
         if ($this->isAdmin($user)) {
 
             $myuser = User::find($id);
-
-            return $this->onSuccess($myuser, 'Retrieved successfully', 200);
+            if (!empty($myuser)) {
+                return $this->onSuccess($myuser, 'User Retrieved successfully', 200);
+            }
+            return $this->onError('User Not Found');
         }
         return $this->onError(401, 'Unauthorized Access');
     }
@@ -109,7 +114,7 @@ class CreateUsers extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user, $id)
+    public function update(Request $request, $id)
     {
         //
         $user = Auth::user();
@@ -117,12 +122,14 @@ class CreateUsers extends Controller
         if ($this->isAdmin($user)) {
 
             $myuser = User::find($id);
-            // $myuser = Role::find($id);
-            $myuser->name = $request->input('name');
-            $myuser->email = $request->input('email');
-            $user->password = Hash::make($request->get('password'));
-            $myuser->save();
-            return $this->onSuccess($myuser, 'Role Updated Successfully');
+            if (!empty($myuser)) {
+                $myuser->name = $request->input('name');
+                $myuser->email = $request->input('email');
+                $user->password = Hash::make($request->get('password'));
+                $myuser->save();
+                return $this->onSuccess($myuser, 'User Updated Successfully');
+            }
+            return $this->onError(404, 'User Not Found');
         }
         return $this->onError(401, 'Unauthorized Access');
     }
@@ -139,11 +146,12 @@ class CreateUsers extends Controller
         $user = Auth::user();
         if ($this->isAdmin($user)) {
             $myuser = User::find($id);
-            $myuser->delete();
             if (!empty($myuser)) {
-                return $this->onSuccess($myuser, 'Role Deleted');
+                
+                $myuser->delete();
+                return $this->onSuccess($myuser, 'User Deleted');
             }
-            return $this->onError(404, 'Role Not Found');
+            return $this->onError(404, 'User Not Found');
         }
         return $this->onError(401, 'Unauthorized Access');
     }

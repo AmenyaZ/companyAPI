@@ -28,7 +28,11 @@ class ControllerExample extends Controller
 
         if ($this->isAdmin($user) || $this->isUser($user)) {
             $role = DB::table('roles')->get();
-            return $this->onSuccess($role, 'Role Retrieved');
+            if (!empty($role)) {
+
+                return $this->onSuccess($role, 'Role Retrieved');
+            }
+            return $this->onError(404, 'No Roles Found');
         }
 
         return $this->onError(401, 'Unauthorized Access');
@@ -81,10 +85,13 @@ class ControllerExample extends Controller
             }
             // Update New Role
             $role = Role::find($id);
+            if (!empty($role)) {
             $role->title = $request->input('title');
             $role->content = $request->input('content');
             $role->save();
             return $this->onSuccess($role, 'Role Updated');
+            }
+            return $this->onError(404, 'Role Not Found');
         }
         return $this->onError(401, 'Unauthorized Access');
     }
