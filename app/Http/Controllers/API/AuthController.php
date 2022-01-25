@@ -5,11 +5,15 @@ namespace App\Http\Controllers\API;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\Middleware\Authenticate;
+use League\OAuth2\Server\ResponseTypes\BearerTokenResponse;
+use Laravel\Passport\Token;
+
 
 class AuthController extends Controller
 {
@@ -27,7 +31,7 @@ class AuthController extends Controller
 
         $accessToken = $user->createToken('authToken')->accessToken;
 
-        return response([ 'user' => $user, 'access_token' => $accessToken]);
+        return response(['user' => $user, 'access_token' => $accessToken]);
     }
     /* $loginData = $request->validate([
             'email' => 'email|required',
@@ -46,37 +50,38 @@ class AuthController extends Controller
 
         return response(['user' => auth()->user(), 'access_token' => $accessToken]);
         */
-        public function login(Request $request)
-        {
+    public function login(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'email' => 'required|string|email|max:255',
             'password' => 'required|string|min:6|confirmed',
         ]);
-        if ($validator->fails())
-        {
-            return response(['errors'=>$validator->errors()->all()], 422);
+        if ($validator->fails()) {
+            return response(['errors' => $validator->errors()->all()], 422);
         }
         $user = User::where('email', $request->email)->first();
         if ($user) {
             if (Hash::check($request->password, $user->password)) {
-                $accessToken = $user-> createToken('authToken')->accessToken;
-                $response = [ 'user' => $user, 'access_token' => $accessToken];
+                $accessToken = $user->createToken('authToken')->accessToken;
+                $response = ['user' => $user, 'access_token' => $accessToken];
                 return response($response, 200);
             } else {
                 $response = ["message" => "Password mismatch"];
                 return response($response, 422);
             }
         } else {
-            $response = ["message" =>'User does not exist'];
+            $response = ["message" => 'User does not exist'];
             return response($response, 422);
         }
     }
-    public function logout (Request $request) {
+    public function logout(Request $request, $id)
+    {
+        // $accessToken = auth()->user()->currentAccessToken();
+        // $token= $request->user()->tokens->find($accessToken);
+        // $token->revoke();
+        // return response(['message' => 'You have been successfully logged out.'], 200);
 
-        $user = Auth::user();
-        $token = $request->$user->token('authToken');
-        $token->revoke();
-        $response = ['message' => 'You have been successfully logged out!'];
-        return response($response, 200);
+        // $request->user()->currentAccessToken()->delete();
+        return response(['message' => 'You have been successfully logged out.'], 200);
     }
 }
