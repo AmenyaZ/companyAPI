@@ -6,6 +6,7 @@ namespace App\Http\Controllers\API;
 use App\Http\Library\ApiHelpers;
 use App\Models\Role;
 use App\Models\User;
+use App\Http\Resources\RoleResource;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -16,7 +17,7 @@ use Illuminate\Http\Request;
 //use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
 
-class ControllerExample extends Controller
+class RolesController extends Controller
 {
     use ApiHelpers;
 
@@ -27,10 +28,10 @@ class ControllerExample extends Controller
         $user = Auth::user();
 
         if ($this->isAdmin($user) || $this->isUser($user)) {
-            $role = DB::table('roles')->get();
+           // $role = DB::table('roles')->get();
+            $role =Role::all();
             if (!empty($role)) {
-
-                return $this->onSuccess($role, 'Role Retrieved');
+                return $this->onSuccess(['role'=> RoleResource::collection($role), 'message' => 'Role Retrieved']);
             }
             return $this->onError(404, 'No Roles Found');
         }
@@ -45,7 +46,7 @@ class ControllerExample extends Controller
             $role = Role::find($id);
             //$role = DB::table('roles')->where('id', $request->$id)->first();
             if (!empty($role)) {
-                return $this->onSuccess($role, 'Roles Retrieved');
+                return $this->onSuccess(['role'=> RoleResource::collection($role), 'message' => 'Role Retrieved']);
             }
             return $this->onError(404, 'Roles Not Found');
         }
@@ -63,13 +64,13 @@ class ControllerExample extends Controller
                 return $this->onError(404, 'Validator Error');
             }
             // Create New Role;
-            $Role = new Role();
-            $Role->title = $request->get('title');
+            $role = new Role();
+            $role->title = $request->get('title');
             //$Role->title = $request->input('title');
-            $Role->slug = Str::slug($request->get('title'));
-            $Role->description = $request->get('description');
-            $Role->save();
-            return $this->onSuccess($Role, 'Role Created');
+            $role->slug = Str::slug($request->get('title'));
+            $role->description = $request->get('description');
+            $role->save();
+            return $this->onSuccess(['role'=> RoleResource::collection($role), 'message' => 'Role Created']);
         }
 
         return $this->onError(401, 'Unauthorized Access');
@@ -89,7 +90,8 @@ class ControllerExample extends Controller
             $role->title = $request->input('title');
             $role->content = $request->input('content');
             $role->save();
-            return $this->onSuccess($role, 'Role Updated');
+            return $this->onSuccess(['role'=> RoleResource::collection($role), 'message' => 'Role Updated']);
+
             }
             return $this->onError(404, 'Role Not Found');
         }
@@ -99,10 +101,11 @@ class ControllerExample extends Controller
     {
         $user = Auth::user();
         if ($this->isAdmin($user) || $this->isWriter($user)) {
-            $Role = Role::find($id); // Find the id of the Role passed
-            $Role->delete(); // Delete the specific Role data
+            $role = Role::find($id); // Find the id of the Role passed
+            $role->delete(); // Delete the specific Role data
             if (!empty($Role)) {
-                return $this->onSuccess($Role, 'Role Deleted');
+                return $this->onSuccess(['role'=> RoleResource::collection($role), 'message' => 'Role Deleted']);
+
             }
             return $this->onError(404, 'Role Not Found');
         }
