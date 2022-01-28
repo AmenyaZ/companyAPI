@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\OrganizationResource;
 use App\Models\Organization;
 use App\Http\Library\ApiHelpers;
+use App\Http\Requests\OrganizationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -42,16 +43,12 @@ class OrganizationController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(OrganizationRequest $request)
     {
         $user = Auth::user();
 
-        $validator = Validator::make($request->all(), [
-            'legal_name',
-            'physical_location',
-            'year',
-            'company_logo'
-        ]);
+       // $validator = $request->validated();
+        $validator = Validator::make($request->all(), $request->validated());
         // $user = DB::table('users')->select('role')->where('id',1)->first();
         if ($this->isAdmin($user)) {
 
@@ -65,11 +62,7 @@ class OrganizationController extends Controller
             $org->company_logo = $request->file('company_logo');
             $org->save();
 
-            //return "here";
-
-            //$org = Organization::create($data);
-
-            return response(['org' => new OrganizationResource($org), 'message' => 'Organization Created successfully'], 200);
+            return response(['org' => $org, 'message' => 'Organization Created successfully'], 200);
         }
         return response(401, 'Unauthorized Access');
     }
@@ -93,7 +86,7 @@ class OrganizationController extends Controller
 
             if (!empty($myOrganization)) {
 
-                return $this->response($myOrganization, 'Orgnaization Retrieved successfully', 200);
+                return response(['Organization' => $myOrganization, 'Orgnaization Retrieved successfully']);
             }
             return response(404, 'Organization  Not Found');
         }
@@ -120,7 +113,7 @@ class OrganizationController extends Controller
                 $org->year = $request->get('year');
                 $org->company_logo = $request->file('company_logo');
                 $org->save();
-                return $this->response($org, 'Role Updated');
+                return response($org, 'Role Updated');
 
             }
             return response(404, 'Organization  Not Found');
