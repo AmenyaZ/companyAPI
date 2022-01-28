@@ -44,6 +44,7 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         $accessToken = $user->createToken('authToken')->accessToken;
+        
         return response(['user' => $user,'access_token' => $accessToken, 'message' => 'Log In Succesful']);
     }
     public function logout()
