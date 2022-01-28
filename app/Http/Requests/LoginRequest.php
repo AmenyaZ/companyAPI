@@ -2,7 +2,10 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 
 class LoginRequest extends FormRequest
 {
@@ -13,7 +16,7 @@ class LoginRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -28,5 +31,19 @@ class LoginRequest extends FormRequest
             'email' => 'email|required',
             'password' => 'required'
         ];
+    }
+    public function messages()
+    {
+        return [
+            "email.required"=>"Please provide email",
+            "password.required"=>"please provide password"
+
+
+        ];
+    }
+    protected function failedValidation(Validator $validator)
+    {
+        $response = new Response(["error"=>$validator->errors()->first()],422);
+        throw new  ValidationException($validator,$response);
     }
 }

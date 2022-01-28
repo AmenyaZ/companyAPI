@@ -67,7 +67,8 @@ class UsersController extends Controller
 
 
         if ($this->isAdmin($user)) {
-            $validator = Validator::make($request->all());
+            $validator = $request->validated();
+           // $validator = Validator::make($request->all());
             if ($validator->fails()) {
                 return $this->onError(400, $validator->errors());
             }
@@ -111,7 +112,7 @@ class UsersController extends Controller
             $myuser = User::find($id);
 
             if (!empty($myuser)) {
-                
+
                 return $this->onSuccess(['user' => UserResource::collection($myuser), 'message' => 'Users Retrieved']);
             }
             return $this->onError('User Not Found');
@@ -139,7 +140,7 @@ class UsersController extends Controller
                 $myuser->email = $request->input('email');
                 $user->password = Hash::make($request->get('password'));
                 $myuser->save();
-                return $this->onSuccess(['user' => UserResource::collection($myuser), 'message' => 'Users Updated']);
+                return response (['user' => UserResource::collection($myuser), 'message' => 'Users Updated']);
             }
             return $this->onError(404, 'User Not Found');
         }
