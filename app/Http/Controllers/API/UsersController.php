@@ -65,8 +65,6 @@ class UsersController extends Controller
         //$myrole = [2, 3];
         $validator = Validator::make($request->all(), $request->validated());
 
-
-
         if ($this->isAdmin($user)) {
             $validator = $request->validated();
             if (!$validator) {
