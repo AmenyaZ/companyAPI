@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\UserRequest;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Auth\Middleware\Authenticate;
@@ -17,13 +18,14 @@ use Laravel\Passport\Token;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
+    public function register(UserRequest $request)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|max:55',
-            'email' => 'email|required|unique:users',
-            'password' => 'required|confirmed'
-        ]);
+        // $validatedData = $request->validate([
+        //     'name' => 'required|max:55',
+        //     'email' => 'email|required|unique:users',
+        //     'password' => 'required|confirmed'
+        // ]);
+        $validatedData=Validator::make($request->all());
 
         $validatedData['password'] = bcrypt($request->password);
 
@@ -74,14 +76,9 @@ class AuthController extends Controller
             return response($response, 422);
         }
     }
-    public function logout(Request $request, $id)
+    public function logout( )
     {
-        // $accessToken = auth()->user()->currentAccessToken();
-        // $token= $request->user()->tokens->find($accessToken);
-        // $token->revoke();
-        // return response(['message' => 'You have been successfully logged out.'], 200);
-
-        // $request->user()->currentAccessToken()->delete();
+        $accessToken = auth()->logout();
         return response(['message' => 'You have been successfully logged out.'], 200);
     }
 }

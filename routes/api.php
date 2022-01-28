@@ -5,8 +5,8 @@ use Illuminate\Http\Request;
 use App\Http\Middleware\Authenticate;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\AuthController;
-use App\Http\Controllers\API\ControllerExample;
-use App\Http\Controllers\API\CreateUsers;
+use App\Http\Controllers\API\RolesController;
+use App\Http\Controllers\API\UsersController;
 use App\Http\Controllers\API\OrganizationController;
 
 
@@ -36,10 +36,10 @@ Route::group(['middleware' => 'auth:api'], function () {
     Route::apiResource('/organization', OrganizationController::class);
 
     //Role
-    Route::apiResource('/role', ControllerExample::class);
+    Route::apiResource('/role', RolesController::class);
 
     // User
-    Route::apiResource('user', CreateUsers::class);
+    Route::apiResource('/user', UsersController::class);
 });
 
 

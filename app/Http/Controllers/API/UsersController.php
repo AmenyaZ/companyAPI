@@ -10,15 +10,17 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 //use Illuminate\Validation\Validator;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Resources\UserResource;
 use Illuminate\Support\Str;
 use App\Http\Library\ApiHelpers;
+use App\Http\Requests\UserRequest;
 use App\Models\Role;
 use App\Models\RoleUser;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\Console\Input\Input;
 
-class CreateUsers extends Controller
+class UsersController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,15 +29,23 @@ class CreateUsers extends Controller
      */
     use ApiHelpers;
 
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
 
-    public function index()
+
+    public function index(Request $request)
     {
         $user = Auth::user();
 
         if ($this->isAdmin($user)) {
-            if (!empty($user)) {
-                $myusers = DB::table('users')->get();
-                return $this->onSuccess($myusers, 'Users Retrieved');
+
+            $myuser = User::all();
+            if (($myuser)) {
+
+                //return UserResource::collection($myuser);
+                return $this->onSuccess(['user' => UserResource::collection($myuser), 'message' => 'Users Retrieved']);
             }
             return $this->onError(404, 'No users Available');
         }
@@ -49,7 +59,7 @@ class CreateUsers extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(UserRequest $request)
     {
         //
         $user = Auth::user();
@@ -57,7 +67,7 @@ class CreateUsers extends Controller
 
 
         if ($this->isAdmin($user)) {
-            $validator = Validator::make($request->all(), $this->userValidatedRules());
+            $validator = Validator::make($request->all());
             if ($validator->fails()) {
                 return $this->onError(400, $validator->errors());
             }
@@ -79,7 +89,7 @@ class CreateUsers extends Controller
 
 
             $userToken = $user->createToken('authToken')->accessToken;
-            return response(['User' => $user, 'Access Token' => $userToken]);
+            return $this->onSuccess(['user' => UserResource::collection($user), 'Access Token' => $userToken, 'message' => 'Users Created']);
         }
 
         return $this->onError(401, 'Unauthorized Access');
@@ -99,8 +109,10 @@ class CreateUsers extends Controller
         if ($this->isAdmin($user)) {
 
             $myuser = User::find($id);
+
             if (!empty($myuser)) {
-                return $this->onSuccess($myuser, 'User Retrieved successfully', 200);
+                
+                return $this->onSuccess(['user' => UserResource::collection($myuser), 'message' => 'Users Retrieved']);
             }
             return $this->onError('User Not Found');
         }
@@ -127,7 +139,7 @@ class CreateUsers extends Controller
                 $myuser->email = $request->input('email');
                 $user->password = Hash::make($request->get('password'));
                 $myuser->save();
-                return $this->onSuccess($myuser, 'User Updated Successfully');
+                return $this->onSuccess(['user' => UserResource::collection($myuser), 'message' => 'Users Updated']);
             }
             return $this->onError(404, 'User Not Found');
         }
@@ -147,9 +159,9 @@ class CreateUsers extends Controller
         if ($this->isAdmin($user)) {
             $myuser = User::find($id);
             if (!empty($myuser)) {
-                
+
                 $myuser->delete();
-                return $this->onSuccess($myuser, 'User Deleted');
+                return $this->onSuccess(['user' => UserResource::collection($myuser), 'message' => 'Users Deleted']);
             }
             return $this->onError(404, 'User Not Found');
         }
