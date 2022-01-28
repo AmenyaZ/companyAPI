@@ -45,7 +45,7 @@ class UsersController extends Controller
             if (($myuser)) {
 
                 //return UserResource::collection($myuser);
-                return $this->onSuccess(['user' => UserResource::collection($myuser), 'message' => 'Users Retrieved']);
+                return $this->response(['user' => UserResource::collection($myuser), 'message' => 'Users Retrieved']);
             }
             return response(404, 'No users Available');
         }
@@ -90,7 +90,7 @@ class UsersController extends Controller
 
 
             $userToken = $user->createToken('authToken')->accessToken;
-            return $this->onSuccess(['user' => UserResource::collection($user), 'Access Token' => $userToken, 'message' => 'Users Created']);
+            return $this->response(['user' => UserResource::collection($user), 'Access Token' => $userToken, 'message' => 'Users Created']);
         }
 
         return response(401, 'Unauthorized Access');
@@ -117,7 +117,7 @@ class UsersController extends Controller
 
               //  return response([UserResource::collection($myuser), 'message' => 'User Retrieved']);
 
-                //return $this->onSuccess(['user' => UserResource::collection($myuser), 'message' => 'Users Retrieved']);
+                //return $this->response(['user' => UserResource::collection($myuser), 'message' => 'Users Retrieved']);
             }
             return response('User Not Found');
         }

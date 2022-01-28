@@ -93,7 +93,7 @@ class OrganizationController extends Controller
 
             if (!empty($myOrganization)) {
 
-                return $this->onSuccess($myOrganization, 'Orgnaization Retrieved successfully', 200);
+                return $this->response($myOrganization, 'Orgnaization Retrieved successfully', 200);
             }
             return response(404, 'Organization  Not Found');
         }
@@ -120,7 +120,7 @@ class OrganizationController extends Controller
                 $org->year = $request->get('year');
                 $org->company_logo = $request->file('company_logo');
                 $org->save();
-                return $this->onSuccess($org, 'Role Updated');
+                return $this->response($org, 'Role Updated');
 
             }
             return response(404, 'Organization  Not Found');

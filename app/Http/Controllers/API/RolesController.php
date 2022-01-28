@@ -31,7 +31,7 @@ class RolesController extends Controller
            // $role = DB::table('roles')->get();
             $role =Role::all();
             if (!empty($role)) {
-                return $this->onSuccess(['role'=> RoleResource::collection($role), 'message' => 'Role Retrieved']);
+                return $this->response(['role'=> RoleResource::collection($role), 'message' => 'Role Retrieved']);
             }
             return response(404, 'No Roles Found');
         }
@@ -70,7 +70,7 @@ class RolesController extends Controller
             $role->slug = Str::slug($request->get('title'));
             $role->description = $request->get('description');
             $role->save();
-            return $this->onSuccess(['role'=> RoleResource::collection($role), 'message' => 'Role Created']);
+            return $this->response(['role'=> RoleResource::collection($role), 'message' => 'Role Created']);
         }
 
         return response(401, 'Unauthorized Access');
@@ -90,7 +90,7 @@ class RolesController extends Controller
             $role->title = $request->input('title');
             $role->content = $request->input('content');
             $role->save();
-            return $this->onSuccess(['role'=> RoleResource::collection($role), 'message' => 'Role Updated']);
+            return $this->response(['role'=> RoleResource::collection($role), 'message' => 'Role Updated']);
 
             }
             return response(404, 'Role Not Found');
@@ -104,7 +104,7 @@ class RolesController extends Controller
             $role = Role::find($id); // Find the id of the Role passed
             $role->delete(); // Delete the specific Role data
             if (!empty($Role)) {
-                return $this->onSuccess(['role'=> RoleResource::collection($role), 'message' => 'Role Deleted']);
+                return $this->response(['role'=> RoleResource::collection($role), 'message' => 'Role Deleted']);
 
             }
             return response(404, 'Role Not Found');
