@@ -31,9 +31,9 @@ class OrganizationController extends Controller
             if (!empty($org)) {
             return response(['organizations' => OrganizationResource::collection($org), 'message' => 'Organizations Retrieved successfully'], 200);
             }
-            return $this->onError(404, 'No Organizations Found');
+            return response(404, 'No Organizations Found');
         }
-        return $this->onError(401, 'Unauthorized Access');
+        return response(401, 'Unauthorized Access');
     }
 
     /**
@@ -71,7 +71,7 @@ class OrganizationController extends Controller
 
             return response(['org' => new OrganizationResource($org), 'message' => 'Organization Created successfully'], 200);
         }
-        return $this->onError(401, 'Unauthorized Access');
+        return response(401, 'Unauthorized Access');
     }
 
 
@@ -93,11 +93,11 @@ class OrganizationController extends Controller
 
             if (!empty($myOrganization)) {
 
-                return $this->onSuccess($myOrganization, 'Orgnaization Retrieved successfully', 200);
+                return $this->response($myOrganization, 'Orgnaization Retrieved successfully', 200);
             }
-            return $this->onError(404, 'Organization  Not Found');
+            return response(404, 'Organization  Not Found');
         }
-        return $this->onError(401, 'Unauthorized Access');
+        return response(401, 'Unauthorized Access');
     }
 
     /**
@@ -120,12 +120,12 @@ class OrganizationController extends Controller
                 $org->year = $request->get('year');
                 $org->company_logo = $request->file('company_logo');
                 $org->save();
-                return $this->onSuccess($org, 'Role Updated');
+                return $this->response($org, 'Role Updated');
 
             }
-            return $this->onError(404, 'Organization  Not Found');
+            return response(404, 'Organization  Not Found');
         }
-        return $this->onError(401, 'Unauthorized Access');
+        return response(401, 'Unauthorized Access');
     }
 
     /**
@@ -146,8 +146,8 @@ class OrganizationController extends Controller
                 $dOrg->delete();
                 return response(['message' => 'Deleted']);
             }
-            return $this->onError(404, 'Organization not found');
+            return response(404, 'Organization not found');
         }
-        return $this->onError(401, 'Unauthorized Access');
+        return response(401, 'Unauthorized Access');
     }
 }
