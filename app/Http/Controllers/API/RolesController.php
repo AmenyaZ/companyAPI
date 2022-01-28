@@ -46,9 +46,9 @@ class RolesController extends Controller
             $role = Role::find($id);
             //$role = DB::table('roles')->where('id', $request->$id)->first();
             if (!empty($role)) {
-                return $this->onSuccess(['role'=> RoleResource::collection($role), 'message' => 'Role Retrieved']);
+                return response(['role'=> RoleResource::collection($role), 'message' => 'Role Retrieved']);
             }
-            return $this->onError(404, 'Roles Not Found');
+            return response(404, 'Roles Not Found');
         }
         return $this->onError(401, 'Unauthorized Access');
     }
