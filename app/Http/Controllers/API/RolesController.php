@@ -33,10 +33,10 @@ class RolesController extends Controller
             if (!empty($role)) {
                 return $this->onSuccess(['role'=> RoleResource::collection($role), 'message' => 'Role Retrieved']);
             }
-            return $this->onError(404, 'No Roles Found');
+            return response(404, 'No Roles Found');
         }
 
-        return $this->onError(401, 'Unauthorized Access');
+        return response(401, 'Unauthorized Access');
     }
     //display single role
     public function show(Request $request, $id): JsonResponse
@@ -50,7 +50,7 @@ class RolesController extends Controller
             }
             return response(404, 'Roles Not Found');
         }
-        return $this->onError(401, 'Unauthorized Access');
+        return response(401, 'Unauthorized Access');
     }
     //create Role
     public function store(Request $request): JsonResponse
@@ -61,7 +61,7 @@ class RolesController extends Controller
         if ($this->isAdmin($user)) {
             $validator = Validator::make($data, $this->roleValidationRules());
             if ($validator->fails()) {
-                return $this->onError(404, 'Validator Error');
+                return response(404, 'Validator Error');
             }
             // Create New Role;
             $role = new Role();
@@ -73,7 +73,7 @@ class RolesController extends Controller
             return $this->onSuccess(['role'=> RoleResource::collection($role), 'message' => 'Role Created']);
         }
 
-        return $this->onError(401, 'Unauthorized Access');
+        return response(401, 'Unauthorized Access');
     }
 
     public function update(Request $request, $id): JsonResponse
@@ -82,7 +82,7 @@ class RolesController extends Controller
         if ($this->isAdmin($user) || $this->isWriter($user)) {
             $validator = Validator::make($request->all(), $this->roleValidationRules());
             if ($validator->fails()) {
-                return $this->onError(400, $validator->errors());
+                return response(400, $validator->errors());
             }
             // Update New Role
             $role = Role::find($id);
@@ -93,9 +93,9 @@ class RolesController extends Controller
             return $this->onSuccess(['role'=> RoleResource::collection($role), 'message' => 'Role Updated']);
 
             }
-            return $this->onError(404, 'Role Not Found');
+            return response(404, 'Role Not Found');
         }
-        return $this->onError(401, 'Unauthorized Access');
+        return response(401, 'Unauthorized Access');
     }
     public function destroy(Request $request, $id): JsonResponse
     {
@@ -107,8 +107,8 @@ class RolesController extends Controller
                 return $this->onSuccess(['role'=> RoleResource::collection($role), 'message' => 'Role Deleted']);
 
             }
-            return $this->onError(404, 'Role Not Found');
+            return response(404, 'Role Not Found');
         }
-        return $this->onError(401, 'Unauthorized Access');
+        return response(401, 'Unauthorized Access');
     }
 }
