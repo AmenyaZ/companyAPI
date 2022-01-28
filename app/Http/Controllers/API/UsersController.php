@@ -47,10 +47,10 @@ class UsersController extends Controller
                 //return UserResource::collection($myuser);
                 return $this->onSuccess(['user' => UserResource::collection($myuser), 'message' => 'Users Retrieved']);
             }
-            return $this->onError(404, 'No users Available');
+            return response(404, 'No users Available');
         }
 
-        return $this->onError(401, 'Unauthorized Access');
+        return response(401, 'Unauthorized Access');
     }
 
     /**
@@ -70,7 +70,7 @@ class UsersController extends Controller
             $validator = $request->validated();
             // $validator = Validator::make($request->all());
             if ($validator->fails()) {
-                return $this->onError(400, $validator->errors());
+                return response(400, $validator->errors());
             }
             //Create New User
             $user = new User();
@@ -93,7 +93,7 @@ class UsersController extends Controller
             return $this->onSuccess(['user' => UserResource::collection($user), 'Access Token' => $userToken, 'message' => 'Users Created']);
         }
 
-        return $this->onError(401, 'Unauthorized Access');
+        return response(401, 'Unauthorized Access');
     }
 
     /**
@@ -119,9 +119,9 @@ class UsersController extends Controller
 
                 //return $this->onSuccess(['user' => UserResource::collection($myuser), 'message' => 'Users Retrieved']);
             }
-            return $this->onError('User Not Found');
+            return response('User Not Found');
         }
-        return $this->onError(401, 'Unauthorized Access');
+        return response(401, 'Unauthorized Access');
     }
 
     /**
@@ -146,9 +146,9 @@ class UsersController extends Controller
                 $myuser->save();
                 return response(['user' => UserResource::collection($myuser), 'message' => 'Users Updated']);
             }
-            return $this->onError(404, 'User Not Found');
+            return response(404, 'User Not Found');
         }
-        return $this->onError(401, 'Unauthorized Access');
+        return response(401, 'Unauthorized Access');
     }
 
     /**
@@ -168,8 +168,8 @@ class UsersController extends Controller
                 $myuser->delete();
                 return response([$myuser, 'message' => 'Users Deleted']);
             }
-            return $this->onError(404, 'User Not Found');
+            return response(404, 'User Not Found');
         }
-        return $this->onError(401, 'Unauthorized Access');
+        return response(401, 'Unauthorized Access');
     }
 }
