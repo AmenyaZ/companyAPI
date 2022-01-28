@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RoleRequest;
 use Illuminate\Http\Request;
 //use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
@@ -28,10 +29,10 @@ class RolesController extends Controller
         $user = Auth::user();
 
         if ($this->isAdmin($user) || $this->isUser($user)) {
-           // $role = DB::table('roles')->get();
-            $role =Role::all();
+            // $role = DB::table('roles')->get();
+            $role = Role::all();
             if (!empty($role)) {
-                return response(['role'=> RoleResource::collection($role), 'message' => 'Role Retrieved']);
+                return response(['role' => RoleResource::collection($role), 'message' => 'Role Retrieved']);
             }
             return response(404, 'No Roles Found');
         }
@@ -46,20 +47,21 @@ class RolesController extends Controller
             $role = Role::find($id);
             //$role = DB::table('roles')->where('id', $request->$id)->first();
             if (!empty($role)) {
-                return response(['role'=> $role, 'message' => 'Role Retrieved']);
+                return response(['role' => $role, 'message' => 'Role Retrieved']);
             }
             return response(404, 'Roles Not Found');
         }
         return response(401, 'Unauthorized Access');
     }
     //create Role
-    public function store(Request $request): JsonResponse
+    public function store(RoleRequest $request): JsonResponse
     {
         $user = Auth::user();
         $data = $request->all();
 
         if ($this->isAdmin($user)) {
-            $validator = Validator::make($data, $this->roleValidationRules());
+            $validator = $request->validated();
+            $validator = Validator::make($data);
             if ($validator->fails()) {
                 return response(404, 'Validator Error');
             }
@@ -70,28 +72,28 @@ class RolesController extends Controller
             $role->slug = Str::slug($request->get('title'));
             $role->description = $request->get('description');
             $role->save();
-            return $this->response(['role'=> RoleResource::collection($role), 'message' => 'Role Created']);
+            return $this->response(['role' => $role, 'message' => 'Role Created']);
         }
 
         return response(401, 'Unauthorized Access');
     }
 
-    public function update(Request $request, $id): JsonResponse
+    public function update(RoleRequest $request, $id): JsonResponse
     {
         $user = Auth::user();
         if ($this->isAdmin($user) || $this->isWriter($user)) {
-            $validator = Validator::make($request->all(), $this->roleValidationRules());
+
+            $validator = Validator::make($request->all());
             if ($validator->fails()) {
                 return response(400, $validator->errors());
             }
             // Update New Role
             $role = Role::find($id);
             if (!empty($role)) {
-            $role->title = $request->input('title');
-            $role->content = $request->input('content');
-            $role->save();
-            return $this->response(['role'=> RoleResource::collection($role), 'message' => 'Role Updated']);
-
+                $role->title = $request->input('title');
+                $role->content = $request->input('content');
+                $role->save();
+                return $this->response(['role' => $role, 'message' => 'Role Updated']);
             }
             return response(404, 'Role Not Found');
         }
@@ -104,8 +106,7 @@ class RolesController extends Controller
             $role = Role::find($id); // Find the id of the Role passed
             $role->delete(); // Delete the specific Role data
             if (!empty($Role)) {
-                return $this->response(['role'=> RoleResource::collection($role), 'message' => 'Role Deleted']);
-
+                return $this->response(['role' => $role, 'message' => 'Role Deleted']);
             }
             return response(404, 'Role Not Found');
         }
