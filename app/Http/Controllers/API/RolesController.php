@@ -24,8 +24,7 @@ class RolesController extends Controller
 
 
     //display all roles
-    public function index(Request $request)
-    {
+    public function index(Request $request) {
         $user = Auth::user();
 
         if ($this->isAdmin($user) || $this->isUser($user)) {
@@ -54,15 +53,15 @@ class RolesController extends Controller
         return response(401, 'Unauthorized Access');
     }
     //create Role
-    public function store(RoleRequest $request): JsonResponse
+    public function store(RoleRequest $request)
     {
         $user = Auth::user();
-        $data = $request->all();
+        $validator = $request->validated();
+       // $validator = Validator::make($request->all(), $request->validated());
 
         if ($this->isAdmin($user)) {
-            $validator = $request->validated();
-            $validator = Validator::make($data);
-            if ($validator->fails()) {
+
+            if (!$validator) {
                 return response(404, 'Validator Error');
             }
             // Create New Role;
@@ -72,7 +71,7 @@ class RolesController extends Controller
             $role->slug = Str::slug($request->get('title'));
             $role->description = $request->get('description');
             $role->save();
-            return $this->response(['role' => $role, 'message' => 'Role Created']);
+            return response(['role' => $role, 'message' => 'Role Created']);
         }
 
         return response(401, 'Unauthorized Access');

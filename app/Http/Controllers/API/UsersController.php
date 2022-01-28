@@ -61,16 +61,14 @@ class UsersController extends Controller
      */
     public function store(UserRequest $request)
     {
-        //
         $user = Auth::user();
         //$myrole = [2, 3];
-
+        $validator = Validator::make($request->all(), $request->validated());
 
         if ($this->isAdmin($user)) {
             $validator = $request->validated();
-            // $validator = Validator::make($request->all());
-            if ($validator->fails()) {
-                return response(400, $validator->errors());
+            if (!$validator) {
+                return response(['error' => $validator->errors(), 'Validation Error']);
             }
             //Create New User
             $user = new User();
@@ -90,7 +88,7 @@ class UsersController extends Controller
 
 
             $userToken = $user->createToken('authToken')->accessToken;
-            return $this->response(['user' => UserResource::collection($user), 'Access Token' => $userToken, 'message' => 'Users Created']);
+            return $this->response(['user' => $user, 'Access Token' => $userToken, 'message' => 'Users Created']);
         }
 
         return response(401, 'Unauthorized Access');
@@ -112,10 +110,10 @@ class UsersController extends Controller
             $myuser = User::find($id);
 
             if (!empty($myuser)) {
-            
+
                 return response($myuser);
 
-              //  return response([UserResource::collection($myuser), 'message' => 'User Retrieved']);
+                //  return response([UserResource::collection($myuser), 'message' => 'User Retrieved']);
 
                 //return $this->response(['user' => UserResource::collection($myuser), 'message' => 'Users Retrieved']);
             }
