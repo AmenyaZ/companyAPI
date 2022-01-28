@@ -23,7 +23,7 @@ class RolesController extends Controller
 
 
     //display all roles
-    public function index(Request $request): JsonResponse
+    public function index(Request $request)
     {
         $user = Auth::user();
 
@@ -31,7 +31,7 @@ class RolesController extends Controller
            // $role = DB::table('roles')->get();
             $role =Role::all();
             if (!empty($role)) {
-                return $this->response(['role'=> RoleResource::collection($role), 'message' => 'Role Retrieved']);
+                return response(['role'=> RoleResource::collection($role), 'message' => 'Role Retrieved']);
             }
             return response(404, 'No Roles Found');
         }
@@ -39,14 +39,14 @@ class RolesController extends Controller
         return response(401, 'Unauthorized Access');
     }
     //display single role
-    public function show(Request $request, $id): JsonResponse
+    public function show(Request $request, $id)
     {
         $user = Auth::user();
         if ($this->isAdmin($user) || $this->isUser($user)) {
             $role = Role::find($id);
             //$role = DB::table('roles')->where('id', $request->$id)->first();
             if (!empty($role)) {
-                return response(['role'=> RoleResource::collection($role), 'message' => 'Role Retrieved']);
+                return response(['role'=> $role, 'message' => 'Role Retrieved']);
             }
             return response(404, 'Roles Not Found');
         }
