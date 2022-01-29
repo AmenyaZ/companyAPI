@@ -23,8 +23,7 @@ trait ApiHelpers
     protected function isUser($user): bool
     {
 
-        if (!empty($user)) 
-        {
+        if (!empty($user)) {
             return true;
         }
 
