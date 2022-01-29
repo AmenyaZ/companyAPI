@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\RoleUserRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Library\ApiHelpers;
+use App\Models\RoleUser;
 
 class RoleUserController extends Controller
 {
@@ -14,6 +18,13 @@ class RoleUserController extends Controller
     public function index()
     {
         //
+        $user = Auth::user();
+        if($this->isAdmin($user)){
+            $ru = RoleUser::all();
+            return response($ru);
+        }
+        return response(401, 'Unauthorized Access');
+
     }
 
     /**
@@ -32,7 +43,7 @@ class RoleUserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(RoleUserRequest $request)
     {
         //
     }

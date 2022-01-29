@@ -65,6 +65,7 @@ class UsersController extends Controller
         //$myrole = [2, 3];
         $validator = Validator::make($request->all(), $request->validated());
 
+
         if ($this->isAdmin($user)) {
             $validator = $request->validated();
             if (!$validator) {
@@ -77,7 +78,6 @@ class UsersController extends Controller
             //$user->role = $request->get('role');
             $user->password = Hash::make($request->get('password'));
             $user->save();
-
 
             // $myId = $user->id;
             $myrole = $request->role;
