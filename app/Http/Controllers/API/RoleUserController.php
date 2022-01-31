@@ -94,7 +94,7 @@ class RoleUserController extends Controller
 
             $myrole = RoleUser::find($id);
             if (!empty($myrole)) {
-                //create roles
+                //Assign roles 
                 $myrole->role_id = $request->get('role');
                 $myrole->user_id = $request->get('user');
                 $myrole->save();
@@ -117,8 +117,9 @@ class RoleUserController extends Controller
             $myrole = RoleUser::find($id);
             if (!empty($myrole)) {
                 $myrole->delete();
-                return response(['message' => 'Role deleted']);
+                return response(['message' => 'User Role removed']);
             }
+            return response(404, 'Role not found');
         }
     }
 }

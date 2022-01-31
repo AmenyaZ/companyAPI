@@ -3,7 +3,11 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\OrganizationUserRequest;
+use App\Models\OrganizationUser;
+use  Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OrganizationUserController extends Controller
 {
@@ -15,17 +19,16 @@ class OrganizationUserController extends Controller
     public function index()
     {
         //
+        $user = Auth::user();
+
+        if ($user) {
+
+            $myorg = OrganizationUser::all();
+            return response($myorg);
+        }
+        return response(401, 'Unauthorized Access');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -33,9 +36,20 @@ class OrganizationUserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(OrganizationUserRequest $request)
     {
-        //
+        $user = Auth::user();
+        $validator = Validator::make($request->all(), $request->validated());
+        if ($user->id == 1) {
+            if (!$validator) {
+                return response(['error' => $validator->errors(), 'Validation Failed']);
+            }
+            $myorg = new OrganizationUser();
+            $myorg->organization_id = $request->get('organization_id');
+            $myorg->user_id = $request->get('user_id');
+            $myorg->save();
+            return response(['message' => 'User Succesfully added to Organization']);
+        }
     }
 
     /**
@@ -46,19 +60,17 @@ class OrganizationUserController extends Controller
      */
     public function show($id)
     {
-        //
+
+        $user = Auth::user();
+        $myorg = OrganizationUser::all($id);
+
+        if ($user) {
+            return response($myorg);
+        }
+        return response(401, 'Unauthorized Access');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
+
 
     /**
      * Update the specified resource in storage.
@@ -70,6 +82,17 @@ class OrganizationUserController extends Controller
     public function update(Request $request, $id)
     {
         //
+        $user = Auth::user();
+        $myorg = OrganizationUser::find($id);
+        if ($user->id == 1) {
+            if (!empty($myorg)) {
+                //assign Organizations
+                $myorg->organization_id = $request->get('organization_id');
+                $myorg->user_id = $request->get('user_id');
+                $myorg->save();
+                return response(['message' => 'User Organization Succesfully updated']);
+            }
+        }
     }
 
     /**
@@ -81,5 +104,14 @@ class OrganizationUserController extends Controller
     public function destroy($id)
     {
         //
+        $user = Auth::user();
+        if ($user->id == 1) {
+            $myorg = OrganizationUser::find($id);
+            if (!empty($myorg)){
+                $myorg ->delete();
+                return response(['message'=>'user removed from organization']);
+            }
+            return response(401, 'user not a avilable');
+        }
     }
 }
