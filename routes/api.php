@@ -8,7 +8,7 @@ use App\Http\Controllers\API\AuthController;
 use App\Http\Controllers\API\RolesController;
 use App\Http\Controllers\API\UsersController;
 use App\Http\Controllers\API\OrganizationController;
-
+use App\Http\Controllers\API\RoleUserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,6 +40,9 @@ Route::group(['middleware' => 'auth:api'], function () {
 
     // User
     Route::apiResource('/user', UsersController::class);
+
+    //RoleUser
+    Route::apiResource('/userrole', RoleUserController::class);
 });
 
 
