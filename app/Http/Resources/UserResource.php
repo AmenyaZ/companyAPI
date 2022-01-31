@@ -17,7 +17,7 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
-        $user = Auth::user();
+       // $user = Auth::user();
 
         //return parent::toArray($request);
         return [
@@ -28,7 +28,8 @@ class UserResource extends JsonResource
                 "email" => $this->email,
             ],
             "relationships" => [
-                "roles" => RoleResource::collection($this->roles)
+                "roles" => RoleResource::collection($this->roles),
+                "organizations"=>OrganizationResource::collection($this->organizations)
             ]
         ];
     }
