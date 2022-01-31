@@ -81,7 +81,15 @@ class User extends Authenticatable
     }
     public function organizations()
     {
-        return $this->belongsToMany(Organization::class);
+        //return $this->belongsToMany(Organization::class);
+        return $this->hasManyThrough(
+            Organization::class,
+            OrganizationUser::class,
+            "user_id",
+            "id",
+            "id",
+            "organization_id"
+        );
     }
 
     public function user_roles()
@@ -92,4 +100,12 @@ class User extends Authenticatable
             "id"
         );
     }
+    public function user_organization(){
+        return $this->hasMany(
+            OrganizationUser::class,
+            "user_id",
+            "id"
+        );
+    }
+    
 }

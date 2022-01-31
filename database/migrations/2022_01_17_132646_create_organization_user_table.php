@@ -18,13 +18,11 @@ class CreateOrganizationUserTable extends Migration
 
             $table->unsignedBigInteger('organization_id')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
-
+            $table->timestamps();
 
 
             $table->foreign('organization_id')->references('id')->on('organizations')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-
-
         });
     }
 
