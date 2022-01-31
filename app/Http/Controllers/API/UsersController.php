@@ -45,7 +45,7 @@ class UsersController extends Controller
             if (($myuser)) {
 
                 //return UserResource::collection($myuser);
-                return $this->response(['user' => UserResource::collection($myuser), 'message' => 'Users Retrieved']);
+                return response(['user' => UserResource::collection($myuser), 'message' => 'Users Retrieved']);
             }
             return response(404, 'No users Available');
         }
@@ -116,9 +116,11 @@ class UsersController extends Controller
 
             if (!empty($myuser)) {
 
+
+
                 return response($myuser);
 
-                //  return response([UserResource::collection($myuser), 'message' => 'User Retrieved']);
+                //return response(['user' => UserResource::collection($myuser), 'message' => 'User Retrieved']);
 
                 //return $this->response(['user' => UserResource::collection($myuser), 'message' => 'Users Retrieved']);
             }
