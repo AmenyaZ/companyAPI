@@ -7,9 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\RoleUserRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Library\ApiHelpers;
 use App\Models\RoleUser;
 use  Illuminate\Support\Facades\Validator;
+
 
 //use Illuminate\Support\Facades\Validator;
 
@@ -24,12 +24,13 @@ class RoleUserController extends Controller
     {
         //
         $user = Auth::user();
-        if ($this->isAdmin($user)) {
+        if ($user) {
 
             $ru = RoleUser::all();
             return response($ru);
         }
         return response(401, 'Unauthorized Access');
+    
     }
 
 
@@ -43,17 +44,20 @@ class RoleUserController extends Controller
     {
         $user = Auth::user();
         $validator = Validator::make($request->all(), $request->validated());
-        if ($this->isAdmin($user)) {
-            $validator = $request->validated();
-            if(!$validator){
-                return response(['error'=> $validator->errors(), 'Validation Errors']);
+        if ($user) {
+            if (!$validator) {
+                return response(['error' => $validator->errors(), 'Validation Errors']);
             }
             //create roles
             $myrole = new  RoleUser();
-            $myrole -> role_id = $request->get('role');
-            $myrole -> user_id = $request->get('user');
-            $myrole -> save();
+            $myrole->role_id = $request->get('role_id');
+            $myrole->user_id = $request->get('user_id');
+            
+            $myrole->save();
+
+            return response(['message' => 'Role  ', $myrole->role_id, 'Succesfully assigned to user id', $myrole->user_id]);
         }
+        return response(401, 'Unauthorized Access');
     }
     /**
      * Display the specified resource.
@@ -65,12 +69,12 @@ class RoleUserController extends Controller
     {
         //
         $user = Auth::user();
-        if($this ->isAdmin($user)){
+        if ($user) {
             $myrole = RoleUser::find($id);
-            if (!empty($myrole)){
+            if (!empty($myrole)) {
                 return Response($myrole);
             }
-            return response( 404, 'No role Found');
+            return response(404, 'No role Found');
         }
         return response(401, 'Unauthorized Access');
     }
@@ -86,15 +90,15 @@ class RoleUserController extends Controller
     {
         //
         $user = Auth::user();
-        if ($this->isAdmin($user)) {
+        if ($user) {
 
             $myrole = RoleUser::find($id);
             if (!empty($myrole)) {
-            //create roles
-            $myrole -> role_id = $request->get('role');
-            $myrole -> user_id = $request->get('user');
-            $myrole -> save();
-            return response([$myrole, 'message'=> 'Role Updated']);
+                //create roles
+                $myrole->role_id = $request->get('role');
+                $myrole->user_id = $request->get('user');
+                $myrole->save();
+                return response([$myrole, 'message' => 'Role Updated']);
             }
         }
     }
@@ -109,9 +113,9 @@ class RoleUserController extends Controller
     {
         //
         $user = Auth::user();
-        if ($this->isAdmin($user)){
+        if ($user) {
             $myrole = RoleUser::find($id);
-            if (!empty($myrole)){
+            if (!empty($myrole)) {
                 $myrole->delete();
                 return response(['message' => 'Role deleted']);
             }
