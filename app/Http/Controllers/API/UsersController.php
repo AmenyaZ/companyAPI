@@ -71,6 +71,7 @@ class UsersController extends Controller
             if (!$validator) {
                 return response(['error' => $validator->errors(), 'Validation Error']);
             }
+
             //Create New User
             $user = new User();
             $user->name = $request->get('name');
@@ -79,16 +80,20 @@ class UsersController extends Controller
             $user->password = Hash::make($request->get('password'));
             $user->save();
 
-            // $myId = $user->id;
-            $myrole = $request->role;
-            $myOrg = $request->organization;
 
-            $user->roles()->attach($myrole);
-            $user->organizations()->attach($myOrg);
+            // $myId = $user->id;
+            // $myrole = $request->role;
+            // $myOrg = $request->organization;
+
+            // $storeRole = new RoleUserController();
+            // $storeRole->store($myrole, $user->id);
+            // // $user->roles()->attach($myrole);
+            // // $user->organizations()->attach($myOrg);
 
 
             $userToken = $user->createToken('authToken')->accessToken;
-            return $this->response(['user' => $user, 'Access Token' => $userToken, 'message' => 'Users Created']);
+
+            return response(['user' => $user, 'Access Token' => $userToken, 'message' => 'Users Created']);
         }
 
         return response(401, 'Unauthorized Access');
