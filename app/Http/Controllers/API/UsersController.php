@@ -45,7 +45,7 @@ class UsersController extends Controller
             if (($myuser)) {
 
                 //return UserResource::collection($myuser);
-                return response(['user' => UserResource::collection($myuser), 'message' => 'Users Retrieved']);
+                return response(['users' => UserResource::collection($myuser), 'message' => 'Users Retrieved']);
             }
             return response(404, 'No users Available');
         }
