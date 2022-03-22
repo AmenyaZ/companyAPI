@@ -39,8 +39,11 @@ class OrganizationUserController extends Controller
     public function store(OrganizationUserRequest $request)
     {
         $user = Auth::user();
-        $validator = Validator::make($request->all(), $request->validated());
+       // $validator = Validator::make($request->all(), $request->validated());
+       $validator = $request->validated();
         if ($user->id == 1) {
+          
+        //if ($this->isAdmin($user)){
             if (!$validator) {
                 return response(['error' => $validator->errors(), 'Validation Failed']);
             }
@@ -62,10 +65,10 @@ class OrganizationUserController extends Controller
     {
 
         $user = Auth::user();
-        $myorg = OrganizationUser::all($id);
 
         if ($user) {
-            return response($myorg);
+            $myorg = OrganizationUser::find($id);
+            return response(["Organization" => $myorg ,"Retrieved"]);
         }
         return response(401, 'Unauthorized Access');
     }
