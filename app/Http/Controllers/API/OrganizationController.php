@@ -10,6 +10,7 @@ use App\Http\Requests\OrganizationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class OrganizationController extends Controller
@@ -59,7 +60,8 @@ class OrganizationController extends Controller
             $org->legal_name = $request->get('legal_name');
             $org->physical_location = $request->get('physical_location');
             $org->year = $request->get('year');
-            $org->company_logo = $request->file('company_logo');
+            $image = $request->file('company_logo')->store('public');
+            $org->company_logo = url(Storage::url($image));
             $org->save();
 
             return response(['org' => $org, 'message' => 'Organization Created successfully'], 200);

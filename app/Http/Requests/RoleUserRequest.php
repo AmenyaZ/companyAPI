@@ -25,8 +25,8 @@ class RoleUserRequest extends FormRequest
     {
         return [
             //
-            'role_id',
-            'user_id'
+            'role_id'=> "exists:role,id",
+            'user_id'=> 'exists:users,id'
         ];
     }
 }

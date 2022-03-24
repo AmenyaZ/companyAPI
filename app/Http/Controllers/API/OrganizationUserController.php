@@ -42,7 +42,6 @@ class OrganizationUserController extends Controller
        // $validator = Validator::make($request->all(), $request->validated());
        $validator = $request->validated();
         if ($user->id == 1) {
-          
         //if ($this->isAdmin($user)){
             if (!$validator) {
                 return response(['error' => $validator->errors(), 'Validation Failed']);
