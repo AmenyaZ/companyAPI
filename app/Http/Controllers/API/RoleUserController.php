@@ -55,7 +55,7 @@ class RoleUserController extends Controller
             
             $myrole->save();
 
-            return response(['message' => 'Role  ', $myrole->role_id, 'Succesfully assigned to user id', $myrole->user_id]);
+            return response(['message' => 'Role Succesfully Assigned to User']);
         }
         return response(401, 'Unauthorized Access');
     }

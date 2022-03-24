@@ -26,7 +26,7 @@ class OrganizationUserRequest extends FormRequest
         return [
             //
             'organization_id' => "exists:organizations,id",
-            'user_id' => "exists:organizations,id"
+            'user_id' => "exists:users,id"
         ];
     }
 }
