@@ -24,9 +24,9 @@ class OrganizationRequest extends FormRequest
     public function rules()
     {
         return [
-            'legal_name' => 'required|string',
+            'legal_name',
             'physical_location',
-            'year'=> 'required|string',
+            'year',
             'company_logo'
         ];
     }

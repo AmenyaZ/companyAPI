@@ -26,6 +26,10 @@ class UserResource extends JsonResource
             "attributes" => [
                 "name" => $this->name,
                 "email" => $this->email,
+               // 'profile'=>$this->profile,
+                'image'=> isset($this->image) ? $this->image : null,
+
+
             ],
             "relationships" => [
                 "roles" => RoleResource::collection($this->roles),
