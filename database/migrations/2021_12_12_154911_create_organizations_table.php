@@ -18,7 +18,8 @@ class CreateOrganizationsTable extends Migration
             $table->string('legal_name');
             $table->string('physical_location');
             $table->year('year');
-            $table->string('company_logo');
+            $table->longText('company_logo')->nullable();
+           // $table->string('company_logo_type');
             $table->timestamps();
         });
     }
@@ -33,3 +34,4 @@ class CreateOrganizationsTable extends Migration
         Schema::dropIfExists('organizations');
     }
 }
+

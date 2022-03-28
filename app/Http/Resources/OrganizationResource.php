@@ -23,6 +23,7 @@ class OrganizationResource extends JsonResource
                 "location"=>$this->physical_location,
                 "year"=>$this->year,
                 "logo"=>$this->company_logo,
+                'image'=> isset($this->image) ? $this->image : null,
             ]
         ];
     }
