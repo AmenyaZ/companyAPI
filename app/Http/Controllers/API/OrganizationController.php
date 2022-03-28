@@ -36,7 +36,8 @@ class OrganizationController extends Controller
             $formatted_orgs = [];
             foreach ($organizations as $organization) {
                 $image_64 = $organization['company_logo'];
-                $orgName = $organization->name;
+                $orgName = $organization['legal_name'];
+                $newOrgName = str_replace(' ', '', $orgName);
               //  $extension = "";
                 if ($image_64) {
                     
@@ -46,8 +47,8 @@ class OrganizationController extends Controller
                     $image = str_replace($replace, '', $image_64);
 
                     $image = str_replace(' ', '+', $image);
-                    $imageName = Str::random(10).'.'. $extension;
-
+                    $imageName = $newOrgName.'.'. $extension;
+                   // $imageName = Str::random(10).'.'. $extension;
                     Storage::disk('public')->put($imageName, base64_decode($image));
                     $img_file = Storage::path($imageName);
                     $organization->image = $img_file;

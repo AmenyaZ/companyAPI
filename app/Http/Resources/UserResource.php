@@ -26,7 +26,7 @@ class UserResource extends JsonResource
             "attributes" => [
                 "name" => $this->name,
                 "email" => $this->email,
-                'profile' =>$this->profile,
+               // 'profile'=>$this->profile,
                 'image'=> isset($this->image) ? $this->image : null,
 
 

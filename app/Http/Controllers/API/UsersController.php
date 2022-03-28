@@ -18,6 +18,7 @@ use App\Models\Role;
 use App\Models\RoleUser;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\Console\Input\Input;
 
 class UsersController extends Controller
@@ -42,10 +43,31 @@ class UsersController extends Controller
         if ($this->isAdmin($user)) {
 
             $myuser = User::all();
+            $users = UserResource::collection($myuser);
+            $formated_user = [];
+            foreach ($users as $user){
+                $image_64 = $user['profile'];
+                $userName = $user['name'];
+                $newUserName = str_replace(' ', '', $userName);
+                if($image_64){
+                    $extension = explode('/', explode(':', substr($image_64, 0, strpos($image_64, ';')))[1])[1];   // .jpg .png .pdf
+                    $replace = substr($image_64, 0, strpos($image_64, ',') + 1);
+                    $image = str_replace($replace, '', $image_64);
+
+                    $image = str_replace(' ', '+', $image);
+                    $imageName = $newUserName.'.'. $extension;
+                   // $imageName = Str::random(10).'.'. $extension;
+                    Storage::disk('public')->put($imageName, base64_decode($image));
+                    $img_file = Storage::path($imageName);
+                    $user->image = $img_file;
+                    
+                }
+                array_push($formated_user, $user);
+            }
             if (($myuser)) {
 
                 //return UserResource::collection($myuser);
-                return response(['users' => UserResource::collection($myuser), 'message' => 'Users Retrieved']);
+                return response(['users' => UserResource::collection($formated_user), 'message' => 'Users Retrieved']);
             }
             return response(404, 'No users Available');
         }
@@ -147,6 +169,7 @@ class UsersController extends Controller
             if (!empty($myuser)) {
                 $myuser->name = $request->input('name');
                 $myuser->email = $request->input('email');
+                $user->profile = $request->get('profile');
                 $user->password = Hash::make($request->get('password'));
                 $myuser->save();
                 return response(['user' => UserResource::collection($myuser), 'message' => 'Users Updated']);
