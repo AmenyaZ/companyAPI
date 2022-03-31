@@ -53,12 +53,11 @@ class UsersController extends Controller
                     $extension = explode('/', explode(':', substr($image_64, 0, strpos($image_64, ';')))[1])[1];   // .jpg .png .pdf
                     $replace = substr($image_64, 0, strpos($image_64, ',') + 1);
                     $image = str_replace($replace, '', $image_64);
-
                     $image = str_replace(' ', '+', $image);
                     $imageName = $newUserName.'.'. $extension;
                    // $imageName = Str::random(10).'.'. $extension;
                     Storage::disk('public')->put($imageName, base64_decode($image));
-                    $img_file = Storage::path($imageName);
+                    $img_file = $imageName;
                     $user->image = $img_file;
                     
                 }
@@ -86,14 +85,11 @@ class UsersController extends Controller
         $user = Auth::user();
         //$myrole = [2, 3];
         $validator = Validator::make($request->all(), $request->validated());
-
-
         if ($this->isAdmin($user)) {
             $validator = $request->validated();
             if (!$validator) {
                 return response(['error' => $validator->errors(), 'Validation Error']);
             }
-
             //Create New User
             $user = new User();
             $user->name = $request->get('name');
@@ -101,8 +97,6 @@ class UsersController extends Controller
             $user->profile = $request->get('profile');
             $user->password = Hash::make($request->get('password'));
             $user->save();
-
-
             // $myId = $user->id;
             // $myrole = $request->role;
             // $myOrg = $request->organization;

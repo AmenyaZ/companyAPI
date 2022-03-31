@@ -39,7 +39,7 @@ class OrganizationController extends Controller
                 $orgName = $organization['legal_name'];
                 $newOrgName = str_replace(' ', '', $orgName);
               //  $extension = "";
-                if ($image_64) {
+                if ($image_64) {    
                     
                    // $extension = explode('/', mime_content_type($image_64))[1];   // .jpg .png .pdf
                    $extension = explode('/', explode(':', substr($image_64, 0, strpos($image_64, ';')))[1])[1];   // .jpg .png .pdf
@@ -50,7 +50,7 @@ class OrganizationController extends Controller
                     $imageName = $newOrgName.'.'. $extension;
                    // $imageName = Str::random(10).'.'. $extension;
                     Storage::disk('public')->put($imageName, base64_decode($image));
-                    $img_file = Storage::path($imageName);
+                    $img_file = $imageName;
                     $organization->image = $img_file;
                     
                   
@@ -94,7 +94,7 @@ class OrganizationController extends Controller
             $org->save();
 
 
-            return response([new OrganizationResource($org), 'message' => 'Organization Created successfully'], 200);
+            return response(["Organition" => $org, 'message' => 'Organization Created successfully'], 200);
         }
         return response(401, 'Unauthorized Access');
     }
